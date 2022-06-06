@@ -10,7 +10,7 @@ from network import DQN, QValues
 
 
 class Trainer:
-    def __init__(self, environment_manager: GymEnvManager, layers: list):
+    def __init__(self, environment_manager: GymEnvManager, layers: tuple):
         self.em = environment_manager
         self.policy_net = DQN(layers).to(device)
         self.target_net = DQN(layers).to(device)

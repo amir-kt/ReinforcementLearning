@@ -5,10 +5,13 @@ from configs import device
 
 
 class DQN(nn.Module):
-    def __init__(self, layers: list):
+    def __init__(self, layers: tuple):
         super().__init__()
 
-        self.layers = nn.ModuleList([nn.Linear(in_features=f1, out_features=f2) if t != 'conv' else nn.Conv2d(in_features=f1, out_features=f2) for t, f1, f2 in layers])
+        self.layers = nn.ModuleList(
+            [nn.Linear(in_features=f1, out_features=f2) if t != 'conv' else
+             nn.Conv2d(in_channels=f1, out_channels=f2, kernel_size=1) for t, f1, f2 in layers]
+        )
 
     def forward(self, t: torch.tensor):
         t = t.to(device)

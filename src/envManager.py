@@ -45,12 +45,12 @@ class GymEnvManager:
 class CartPoleManager(GymEnvManager):
     def __init__(self):
         env_name = 'CartPole-v1'
-        self.cartpole_env = gym.make(env_name)
-        super().__init__(self.cartpole_env, True, env_name)
+        cartpole_env = gym.make(env_name)
+        super().__init__(cartpole_env, True, env_name)
 
 
 class PongManager(GymEnvManager):
     def __init__(self):
         env_name = 'ALE/Pong-v5'
-        self.pong_env = gym.make(env_name, render_mode='human')
-        super().__init__(self.pong_env, False, env_name)
+        pong_env = gym.make(env_name, render_mode='human')
+        super().__init__(pong_env, False, env_name)
