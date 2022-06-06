@@ -1,20 +1,19 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from configs import device
 
 
 class DQN(nn.Module):
-    def __init__(self):
+    def __init__(self, layers: list):
         super().__init__()
 
-        self.fc1 = nn.Linear(in_features=4, out_features=24)
-        self.fc2 = nn.Linear(in_features=24, out_features=32)
-        self.out = nn.Linear(in_features=32, out_features=2)
+        self.layers = nn.ModuleList([nn.Linear(in_features=f1, out_features=f2) if t != 'conv' else nn.Conv2d(in_features=f1, out_features=f2) for t, f1, f2 in layers])
 
     def forward(self, t: torch.tensor):
-        t = F.relu(self.fc1(t))
-        t = F.relu(self.fc2(t))
-        t = self.out(t)
+        t = t.to(device)
+        for layer in self.layers:
+            t = F.relu(layer(t))
         return t
 
 

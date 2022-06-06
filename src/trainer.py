@@ -10,24 +10,29 @@ from network import DQN, QValues
 
 
 class Trainer:
-    def __init__(self, environment_manager: GymEnvManager):
+    def __init__(self, environment_manager: GymEnvManager, layers: list):
         self.em = environment_manager
-        strategy = EpsilonGreedyStrategy(eps_start, eps_end, eps_decay)
+        self.policy_net = DQN(layers).to(device)
+        self.target_net = DQN(layers).to(device)
 
-        self.agent = Agent(strategy, self.em.num_actions_available(), device)
-        self.memory = ReplayMemory(memory_size)
-
-        self.policy_net = DQN().to(device)
-        self.target_net = DQN().to(device)
-
-        if load_model:
-            self.load_policy_from_path('policynet')
+        # loading pre trained model
+        pretrained_model_available = os.path.isfile(self.em.env_name) and True
+        if pretrained_model_available:
+            self.load_policy_from_path(self.em.env_name)
 
         self.target_net.load_state_dict(self.policy_net.state_dict())
         self.target_net.eval()
-
         self.optimizer = optim.Adam(params=self.policy_net.parameters(), lr=lr)
         self.episode_durations = []
+
+        # choosing exploration rate based on whether pretrained model is available
+        if pretrained_model_available:
+            strategy = EpsilonGreedyStrategy(0.0, 0.0, 0.0)
+        else:
+            strategy = EpsilonGreedyStrategy(eps_start, eps_end, eps_decay)
+
+        self.agent = Agent(strategy, self.em.num_actions_available(), device)
+        self.memory = ReplayMemory(memory_size)
 
     def load_policy_from_path(self, path):
         self.policy_net.load_state_dict(torch.load(path))

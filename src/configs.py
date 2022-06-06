@@ -11,4 +11,3 @@ memory_size = 100000
 lr = 0.001
 num_episodes = 1000
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-load_model = os.path.isfile('policy') and True

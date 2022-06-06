@@ -4,13 +4,14 @@ from configs import device
 
 
 class GymEnvManager:
-    def __init__(self, env, should_render):
+    def __init__(self, env, should_render, env_name):
         self.device = device
         self.gym_env = env
         self.gym_env.reset()
         self.current_state = None
         self.done = False
         self.should_render = should_render
+        self.env_name = env_name
 
     def reset(self):
         self.current_state = self.gym_env.reset()
@@ -43,13 +44,13 @@ class GymEnvManager:
 
 class CartPoleManager(GymEnvManager):
     def __init__(self):
-        self.env_name = 'CartPole-v1'
-        self.cartpole_env = gym.make(self.env_name)
-        super().__init__(self.cartpole_env, True)
+        env_name = 'CartPole-v1'
+        self.cartpole_env = gym.make(env_name)
+        super().__init__(self.cartpole_env, True, env_name)
 
 
 class PongManager(GymEnvManager):
     def __init__(self):
-        self.env_name = 'ALE/Pong-v5'
-        self.pong_env = gym.make(self.env_name, render_mode='human')
-        super().__init__(self.pong_env, False)
+        env_name = 'ALE/Pong-v5'
+        self.pong_env = gym.make(env_name, render_mode='human')
+        super().__init__(self.pong_env, False, env_name)
