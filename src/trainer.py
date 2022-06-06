@@ -35,6 +35,14 @@ class Trainer:
     def save_policy_to_file(self, filename):
         torch.save(self.policy_net.state_dict(), filename)
 
+    def average_episode_duration(self, no_eps=100):
+        """
+
+        :param no_eps: number of episodes to get an average over
+        :return: average episode duration of the agent in the game over the last "no_eps" number of episodes
+        """
+        return sum(self.episode_durations[-no_eps:]) / min(len(self.episode_durations), no_eps)
+
     def train(self):
         for episode in range(num_episodes):
             self.em.reset()
@@ -65,13 +73,12 @@ class Trainer:
                 if self.em.done:
                     self.episode_durations.append(timestep)
                     # print average time of the last 100 episodes
-                    print(sum(self.episode_durations[-100:]) / min(len(self.episode_durations), 100))
+                    print(self.average_episode_duration())
                     break
 
             if episode % target_update == 0:
                 self.target_net.load_state_dict(self.policy_net.state_dict())
 
-        # print average time of the last 100 episodes
-        print(sum(self.episode_durations[-100:]) / 100)
+        print(self.average_episode_duration())
         self.save_policy_to_file(self.em.env_name)
         self.em.close()
